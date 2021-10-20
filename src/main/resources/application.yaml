@@ -26,3 +26,5 @@ spring:
 utils:
   cart:
     prefix: ONLINE_CART_
+  products:
+    filestorage: src/main/resources/images

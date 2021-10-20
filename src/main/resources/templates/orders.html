@@ -42,15 +42,19 @@
                         <td>Адрес доставки</td>
                         <td>Телефон</td>
                         <td>Стоимость</td>
+                        <td>Статус</td>
+                        <td>Действие</td>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="o in orders" id="order_id_{{o.id}}" ng-click="showorder(o.id)">
-                        <td>{{o.id}}</td>
-                        <td>{{o.createDate}}</td>
-                        <td style = "max-width:50%;word-break: break-all;">{{o.address}}</td>
-                        <td>{{o.phone}}</td>
-                        <td>{{o.price}}</td>
+                    <tr ng-repeat="o in orders" id="order_id_{{o.id}}">
+                        <td   ng-click="showorder(o.id)">{{o.id}}</td>
+                        <td   ng-click="showorder(o.id)">{{o.createDate}}</td>
+                        <td style = "max-width:50%;word-break: break-all;"  ng-click="showorder(o.id)">{{o.address}}</td>
+                        <td ng-click="showorder(o.id)">{{o.phone}}</td>
+                        <td ng-click="showorder(o.id)">{{o.price}}</td>
+                        <td ng-click="showorder(o.id)">{{o.status}}</td>
+                        <td><a href="#" ng-click="pay(o.id)" class="btn btn-primary">Оплатить</a></td>
                     </tr>
 
                     </tr>

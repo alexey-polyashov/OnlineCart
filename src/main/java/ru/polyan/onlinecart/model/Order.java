@@ -50,4 +50,7 @@ public class Order {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     List<OrderItem> orderItemList;
 
+    @Column(name = "status")
+    private String status;
+
 }

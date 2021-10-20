@@ -56,7 +56,8 @@ CREATE TABLE orders (
     address     varchar(250),
     create_time timestamp default current_timestamp,
     update_time timestamp default current_timestamp,
-    total_price numeric(15,2)
+    total_price numeric(15,2),
+    status      varchar(50)
 );
 
 CREATE TABLE order_items (

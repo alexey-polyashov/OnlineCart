@@ -27,7 +27,8 @@ public class ProductService {
 
     public static final String SMALL_IMAGE = "small";
     public static final String BIG_IMAGE = "big";
-
+    @Value("${utils.products.filestorage}")
+    private String fileStorage;
 
 
     private final ProductRepositoryList productRepository;
@@ -97,5 +98,26 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
+    public Path getImageFile(Long id, String size) {
 
+        long interval = ((id / 500)+1) * 500;
+        String pathString = fileStorage + "/" + interval + "/" + id;
+        switch (size){
+            case SMALL_IMAGE:
+                pathString = pathString.concat("/small.jpg");
+                break;
+            case BIG_IMAGE:
+                pathString = pathString.concat("/big.jpg");
+                break;
+            default:
+                pathString = fileStorage + "/default/small.jpg";
+        }
+        Path filePath = Paths.get(pathString);
+        if (!Files.exists(filePath)) {
+            filePath = Paths.get(fileStorage + "/default/small.jpg");
+        }
+
+        return filePath;
+
+    }
 }

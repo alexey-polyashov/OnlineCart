@@ -116,6 +116,17 @@ public class ProductsApiV1 {
 
     }
 
+    @GetMapping(value = "/{id}/getimage/{size}")
+    @ResponseBody
+    public ResponseEntity<byte[]> getImageByID(@PathVariable Long id, @PathVariable String size) {
+        Path imgPath = productService.getImageFile(id, size);
+        try {
+            return ResponseEntity.ok().contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE)).body(Files.readAllBytes(imgPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ResourceNotFoundException("File not found");
+        }
+    }
 
 
 

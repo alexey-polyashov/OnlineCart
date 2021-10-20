@@ -18,12 +18,14 @@ public class OrderDto {
     private String createDate;
     private String address;
     private String phone;
+    private String status;
 
     public OrderDto(Order order) {
         this.id = order.getId();
         this.price = order.getTotalPrice();
         this.address = order.getAddress();
         this.phone = order.getPhone();
+        this.status = order.getStatus();
         DateTimeFormatter formatter =
                 DateTimeFormatter
                         .ofPattern("dd MMMM yyyy - HH:mm");

@@ -53,6 +53,7 @@ public class OrderService {
         order.setUser(user);
         order.setAddress(address);
         order.setPhone(phone);
+        order.setStatus("Не оплачен");
         order.setItems(new ArrayList<>());
         for (OrderItemDto o : cart.getDetails()) {
             OrderItem orderItem = new OrderItem();
@@ -66,6 +67,12 @@ public class OrderService {
         }
         ordersRepository.save(order);
         cartService.clearCart(cartService.getCartUuidFromSuffix(user.getUsername()));
+    }
+
+    public void setStatus(Long id, String newStatus){
+        Order order = ordersRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        order.setStatus(newStatus);
+        ordersRepository.save(order);
     }
 
     public List<Order> findAll(User user) {
