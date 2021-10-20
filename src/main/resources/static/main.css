@@ -1,0 +1,7 @@
+#products_cart {display: -webkit-flex;
+                display: flex; }
+
+.selected_order{background-color:PaleTurquoise}
+.selected_order_details{background-color:LightCyan}
+.selected_order_details_header{background-color:LightCyan; font-weight:600}
+.selected_order_cell{padding:20px}
