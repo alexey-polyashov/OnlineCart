@@ -1,6 +1,7 @@
 package ru.polyan.onlinecart.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -15,11 +16,19 @@ import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 import ru.polyan.onlinecart.repositories.specifications.ProductSpecifications;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+
+    public static final String SMALL_IMAGE = "small";
+    public static final String BIG_IMAGE = "big";
+
+
 
     private final ProductRepositoryList productRepository;
 
@@ -87,5 +96,6 @@ public class ProductService {
     public void deleteProduct(Long id) throws ResourceNotFoundException{
         productRepository.deleteById(id);
     }
+
 
 }

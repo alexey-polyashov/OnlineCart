@@ -23,3 +23,6 @@ spring:
       enabled: true
       settings:
         web-allow-others: false
+utils:
+  cart:
+    prefix: ONLINE_CART_

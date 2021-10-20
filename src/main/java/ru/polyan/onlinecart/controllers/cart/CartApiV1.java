@@ -6,14 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.polyan.onlinecart.dto.OrderItemDto;
-import ru.polyan.onlinecart.dto.ProductDto;
-import ru.polyan.onlinecart.exception.ResourceNotFoundException;
-import ru.polyan.onlinecart.model.User;
+import ru.polyan.onlinecart.services.CartService;
 import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.ProductService;
 import ru.polyan.onlinecart.services.UserService;
 import ru.polyan.onlinecart.utils.CartDetail;
+import ru.polyan.onlinecart.utils.StringResponse;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
@@ -24,48 +24,58 @@ import java.util.List;
 @Slf4j
 public class CartApiV1 {
 
-    private final CartDetail cartDetail;
-    private final ProductService productService;
-    private final UserService userService;
-    private final OrderService orderService;
+    private final CartService cartService;
 
     @GetMapping(value = "")
-    public List<OrderItemDto> getDetail() {
-        return cartDetail.getDetail();
+    public List<OrderItemDto> getDetail(HttpServletRequest request, Principal principal) {
+        String uuid = cartService.getCartUuidFromHeader(request);
+        CartDetail cart = cartService.getCurrentCart(cartService.getCurrentCartUuid(principal, uuid));
+        return cart.getDetails();
     }
 
     @PostMapping(value = "")
-    public void addToCart(@RequestParam Long id) {
-        cartDetail.addToCart(id);
+    public void addToCart(HttpServletRequest request, Principal principal, @RequestParam Long id) {
+        String uuid = cartService.getCartUuidFromHeader(request);
+        cartService.addToCart(cartService.getCurrentCartUuid(principal, uuid), id);
     }
 
     @GetMapping(value = "/getsummary")
-    public BigDecimal getSummary() {
-        return cartDetail.getSummary();
+    public BigDecimal getSummary(HttpServletRequest request, Principal principal) {
+        String uuid = cartService.getCartUuidFromHeader(request);
+        CartDetail cart = cartService.getCurrentCart(cartService.getCurrentCartUuid(principal, uuid));
+        return cart.getTotalPrice();
+    }
+
+    @GetMapping(value = "/generate")
+    public StringResponse generate(HttpServletRequest request, Principal principal) {
+        String uuid = cartService.generateCart();
+        return new StringResponse(uuid);
     }
 
     @PostMapping(value = "/delete")
-    public void delete(@RequestParam Long id, @RequestParam int quantity){
+    public void delete(HttpServletRequest request, Principal principal, @RequestParam Long id, @RequestParam int quantity){
+        String uuid = cartService.getCartUuidFromHeader(request);
+        CartDetail cart = cartService.getCurrentCart(cartService.getCurrentCartUuid(principal, uuid));
         if(quantity==0){
-            cartDetail.deleteItem(id);
+            cartService.removeItemFromCart(cartService.getCurrentCartUuid(principal, uuid), id);
         }else{
-            cartDetail.decreaseItem(id, quantity);
+            cartService.decrementItem(cartService.getCurrentCartUuid(principal, uuid), id);
         }
     }
 
     @GetMapping(value = "/clear")
-    public void clear(){
-        cartDetail.clear();
+    public void clear(HttpServletRequest request, Principal principal){
+        String uuid = cartService.getCartUuidFromHeader(request);
+        cartService.clearCart(cartService.getCurrentCartUuid(principal, uuid));
     }
 
-//    @GetMapping(value = "/createorder")
-//    public ResponseEntity<?> createOrder(Principal principal) throws ResourceNotFoundException {
-//        //cartDetail.createOrder();
-//        User user = userService.findByUsername(principal.getName()).get();
-//        System.out.println(user.getEmail());
-//        orderService.createOrderForUser(user);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @GetMapping("/merge")
+    public void merge(HttpServletRequest request, Principal principal) {
+        String uuid = cartService.getCartUuidFromHeader(request);
+        cartService.merge(
+                cartService.getCurrentCartUuid(principal, null),
+                cartService.getCurrentCartUuid(null, uuid)
+        );
+    }
 
 }

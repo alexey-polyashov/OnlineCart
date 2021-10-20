@@ -6,15 +6,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.polyan.onlinecart.dto.OrderDto;
 import ru.polyan.onlinecart.dto.OrderItemDto;
-import ru.polyan.onlinecart.exception.MarketError;
-import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 import ru.polyan.onlinecart.model.Order;
 import ru.polyan.onlinecart.model.User;
 import ru.polyan.onlinecart.repositories.ProductRepositoryList;
+import ru.polyan.onlinecart.services.CartService;
 import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.UserService;
 import ru.polyan.onlinecart.utils.CartDetail;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +28,14 @@ public class OrdersApiV1 {
     private final OrderService orderService;
     private final ProductRepositoryList productRepository;
     private final UserService userService;
-    private final CartDetail cart;
+    private final CartService cartService;
 
     @PostMapping(value = "/createorder")
-    public ResponseEntity<?> createOrder(Principal principal, @RequestParam(required = false, defaultValue = "") String address, @RequestParam(required = false, defaultValue = "") String phone) {
+    public ResponseEntity<?> createOrder(HttpServletRequest request, Principal principal, @RequestParam(required = false, defaultValue = "") String address, @RequestParam(required = false, defaultValue = "") String phone) {
+        String uuid = cartService.getCartUuidFromHeader(request);
+        CartDetail cartDetail = cartService.getCurrentCart(cartService.getCurrentCartUuid(principal, uuid));
         List<String> errors = new ArrayList<>();
-        if(cart.getDetail().isEmpty()){
+        if(cartDetail.getDetails().isEmpty()){
             errors.add("В корзине нет товаров!");
             return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
         }
@@ -46,10 +48,9 @@ public class OrdersApiV1 {
         if(!errors.isEmpty()){
             return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
         }
-
         User user = userService.findByUsername(principal.getName()).get();
         System.out.println(user.getEmail());
-        orderService.createOrderForUser(user, address, phone);
+        orderService.createOrderForUser(user, uuid, address, phone);
         return new ResponseEntity(HttpStatus.OK);
     }
 

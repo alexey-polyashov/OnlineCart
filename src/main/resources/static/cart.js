@@ -23,15 +23,15 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
             $scope.cartDetail = response.data;
         });
 
-         $http({
-             url: baseURL_cart + 'getsummary/',
-             method: 'GET',
-             params: {}
-         }).then(function(response){
-             console.log(response);
-             $scope.cartSummary = response.data;
-             $scope.cartNotEmpty = $scope.cartSummary>0;
-         });
+        $http({
+            url: baseURL_cart + 'getsummary/',
+            method: 'GET',
+            params: {}
+        }).then(function(response){
+            console.log(response);
+            $scope.cartSummary = response.data;
+            $scope.cartNotEmpty = $scope.cartSummary>0;
+        });
     };
 
     $scope.deleteItem = function(productId){
@@ -131,6 +131,11 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
                     $scope.loginError=false;
                     $scope.user.username = null;
                     $scope.user.password = null;
+                    $http.get(baseURL_cart + 'merge').
+                    then(function successCallback(response){
+                        $scope.loadCart();
+                    });
+
                 }else{
                     $scope.loginError=true;
                 }
@@ -147,13 +152,14 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
 
     $scope.tryToLogout = function () {
         $scope.clearUser();
-        if ($scope.user.username) {
+        $scope.username ='';
+        $scope.loadCart();
+        if ($scope.user.username!=null) {
             $scope.user.username = null;
         }
-        if ($scope.user.password) {
+        if ($scope.user.password!=null) {
             $scope.user.password = null;
         }
-        $scope.username ='';
     };
 
 
@@ -170,6 +176,24 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
         $scope.username =$localStorage.marketUser.username;
     }
 
+    $scope.initCart = function(){
+        if(!$localStorage.cartUuid){
+            $http({
+                url: baseURL_cart + 'generate',
+                method: 'GET',
+                params: {}
+            }).then(function(response){
+                $localStorage.cartUuid = response.data.value;
+            });
+       }
+    }
+
+    $scope.initCart();
+    if ($localStorage.cartUuid) {
+        $http.defaults.headers.common['CartUuid'] = $localStorage.cartUuid;
+    }
+
     $scope.loadCart();
+
 
 });

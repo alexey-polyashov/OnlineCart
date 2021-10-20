@@ -5,10 +5,14 @@ import lombok.NoArgsConstructor;
 import ru.polyan.onlinecart.model.Product;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Data
 @NoArgsConstructor
 public class ProductDto {
+
     private Long id;
     private String title;
     private BigDecimal price;

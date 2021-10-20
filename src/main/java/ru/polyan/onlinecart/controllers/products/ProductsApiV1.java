@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.polyan.onlinecart.dto.ProductDto;
@@ -13,7 +14,11 @@ import ru.polyan.onlinecart.services.CategoryService;
 import ru.polyan.onlinecart.services.ProductService;
 import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 
+import javax.activation.FileTypeMap;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,5 +115,9 @@ public class ProductsApiV1 {
         }
 
     }
+
+
+
+
 
 }

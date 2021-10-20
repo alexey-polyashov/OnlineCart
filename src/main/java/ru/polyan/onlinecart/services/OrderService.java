@@ -13,6 +13,7 @@ import ru.polyan.onlinecart.utils.CartDetail;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ public class OrderService {
 
     private final OrdersRepository ordersRepository;
     private final ProductService productService;
-    private final CartDetail cart;
+    private final CartService cartService;
 
     @Transactional
     public boolean saveOrder(List<OrderItemDto> itemsList, BigDecimal totalPrice){
@@ -40,19 +41,20 @@ public class OrderService {
     }
 
     @Transactional
-    public void createOrderForUser(User user) {
-        createOrderForUser(user, user.getAddress(), user.getPhone());
+    public void createOrderForUser(Principal principal, User user, String cartUuid) {
+        createOrderForUser(user, cartUuid, user.getAddress(), user.getPhone());
     }
 
     @Transactional
-    public void createOrderForUser(User user, String address, String phone) {
+    public void createOrderForUser(User user, String cartUuid, String address, String phone) {
         Order order = new Order();
-        order.setTotalPrice(cart.getSummary());
+        CartDetail cart = cartService.getCurrentCart(cartService.getCartUuidFromSuffix(user.getUsername()));
+        order.setTotalPrice(cart.getTotalPrice());
         order.setUser(user);
         order.setAddress(address);
         order.setPhone(phone);
         order.setItems(new ArrayList<>());
-        for (OrderItemDto o : cart.getDetail()) {
+        for (OrderItemDto o : cart.getDetails()) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setQuantity(o.getQuantity());
@@ -63,7 +65,7 @@ public class OrderService {
             order.getItems().add(orderItem);
         }
         ordersRepository.save(order);
-        cart.clear();
+        cartService.clearCart(cartService.getCartUuidFromSuffix(user.getUsername()));
     }
 
     public List<Order> findAll(User user) {
