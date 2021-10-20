@@ -51,6 +51,6 @@ public class Order {
     List<OrderItem> orderItemList;
 
     @Column(name = "status")
-    private String status;
+    private int status;
 
 }
