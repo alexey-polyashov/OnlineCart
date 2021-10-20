@@ -20,13 +20,15 @@ public class OrderDto {
     private String address;
     private String phone;
     private OrderStatus status;
+    private String statusView;
 
     public OrderDto(Order order) {
         this.id = order.getId();
         this.price = order.getTotalPrice();
-        this.address = order.getAddress();
+        this.address =  order.getFullAddress();
         this.phone = order.getPhone();
         this.status = OrderStatus.values()[order.getStatus()];
+        this.statusView = this.status.getView();
         DateTimeFormatter formatter =
                 DateTimeFormatter
                         .ofPattern("dd MMMM yyyy - HH:mm");

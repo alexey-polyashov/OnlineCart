@@ -29,9 +29,6 @@ public class Order {
     @JoinColumn(name="user_id")
     private User user;
 
-    @Column(name="address")
-    private String address;
-
     @Column(name="phone")
     private String phone;
 
@@ -52,5 +49,27 @@ public class Order {
 
     @Column(name = "status")
     private int status;
+
+    @Column(name = "address_postcode")
+    private String address_postcode;
+    @Column(name = "address_countrycode")
+    private String address_countrycode;
+    @Column(name = "address_line1")
+    private String address_line1;
+    @Column(name = "address_line2")
+    private String address_line2;
+    @Column(name = "address_area1")
+    private String address_area1;
+    @Column(name = "address_area2")
+    private String address_area2;
+
+    public String getFullAddress(){
+        return address_countrycode+
+                ", " + address_postcode+
+                ", " + address_line1+
+                ", " + address_line2+
+                ", " + address_area1+
+                ", " + address_area2;
+    }
 
 }

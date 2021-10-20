@@ -21,14 +21,16 @@ public class OrderDetailsDto {
     private String address;
     private String phone;
     private OrderStatus status;
+    private String statusView;
     private List<OrderItemDto> items = new ArrayList<>();
 
     public OrderDetailsDto(Order order, ProductRepositoryList productRepository) {
         this.id = order.getId();
         this.price = order.getTotalPrice();
-        this.address = order.getAddress();
+        this.address = order.getFullAddress();
         this.phone = order.getPhone();
         this.status = OrderStatus.values()[order.getStatus()];
+        this.statusView = status.getView();
         DateTimeFormatter formatter =
                 DateTimeFormatter
                         .ofPattern("dd MMMM yyyy - HH:mm");
