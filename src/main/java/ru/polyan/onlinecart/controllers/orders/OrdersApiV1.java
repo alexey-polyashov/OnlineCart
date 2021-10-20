@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.polyan.onlinecart.dto.OrderDetailsDto;
 import ru.polyan.onlinecart.dto.OrderDto;
 import ru.polyan.onlinecart.dto.OrderItemDto;
 import ru.polyan.onlinecart.model.Order;
@@ -61,9 +62,11 @@ public class OrdersApiV1 {
     }
 
     @GetMapping(value="orderdetail/{id}")
-    public List<OrderItemDto> getOrderDetail(Principal principal, @PathVariable(name="id") Long orderId) {
+    public OrderDetailsDto getOrderDetail(Principal principal, @PathVariable(name="id") Long orderId) {
         User user = userService.findByUsername(principal.getName()).get();
         Order order = orderService.findByUserAndId(user, orderId);
-        return order.getItems().stream().map(oi-> new OrderItemDto(oi, productRepository)).collect(Collectors.toList());
+        OrderDetailsDto orderDetailsDto = new OrderDetailsDto(order, productRepository);
+        return orderDetailsDto;
+        //return order.getItems().stream().map(oi-> new OrderItemDto(oi, productRepository)).collect(Collectors.toList());
     }
 }

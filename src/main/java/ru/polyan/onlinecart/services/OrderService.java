@@ -10,12 +10,14 @@ import ru.polyan.onlinecart.model.Product;
 import ru.polyan.onlinecart.model.User;
 import ru.polyan.onlinecart.repositories.OrdersRepository;
 import ru.polyan.onlinecart.utils.CartDetail;
+import ru.polyan.onlinecart.utils.OrderStatus;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,7 +55,7 @@ public class OrderService {
         order.setUser(user);
         order.setAddress(address);
         order.setPhone(phone);
-        order.setStatus("Не оплачен");
+        order.setStatus(OrderStatus.PLACED.ordinal());
         order.setItems(new ArrayList<>());
         for (OrderItemDto o : cart.getDetails()) {
             OrderItem orderItem = new OrderItem();
@@ -69,9 +71,9 @@ public class OrderService {
         cartService.clearCart(cartService.getCartUuidFromSuffix(user.getUsername()));
     }
 
-    public void setStatus(Long id, String newStatus){
+    public void setStatus(Long id, OrderStatus newStatus){
         Order order = ordersRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-        order.setStatus(newStatus);
+        order.setStatus(newStatus.ordinal());
         ordersRepository.save(order);
     }
 
