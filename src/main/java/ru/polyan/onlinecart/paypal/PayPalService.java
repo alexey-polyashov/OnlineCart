@@ -14,6 +14,7 @@ import ru.polyan.onlinecart.services.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ public class PayPalService {
 
     @Transactional
     public OrderRequest createOrderRequest(User user, Long orderId) {
+
         ru.polyan.onlinecart.model.Order order = orderService.findByUserAndId(user, orderId);
 
         OrderRequest orderRequest = new OrderRequest();
@@ -54,8 +56,13 @@ public class PayPalService {
                         })
                         .collect(Collectors.toList()))
                 .shippingDetail(new ShippingDetail().name(new Name().fullName(order.getUser().getUsername()))
-                        .addressPortable(new AddressPortable().addressLine1("123 Townsend St").addressLine2("Floor 6")
-                                .adminArea2("San Francisco").adminArea1("CA").postalCode("94107").countryCode("US")));
+                        .addressPortable(new AddressPortable()
+                                .addressLine1(order.getAddress_line1())
+                                .addressLine2(order.getAddress_line2())
+                                .adminArea2(order.getAddress_area1())
+                                .adminArea1(order.getAddress_area2())
+                                .postalCode(order.getAddress_postcode())
+                                .countryCode(order.getAddress_countrycode())));
         purchaseUnitRequests.add(purchaseUnitRequest);
         orderRequest.purchaseUnits(purchaseUnitRequests);
         return orderRequest;

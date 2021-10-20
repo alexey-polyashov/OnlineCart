@@ -43,17 +43,24 @@ public class OrderService {
     }
 
     @Transactional
-    public void createOrderForUser(Principal principal, User user, String cartUuid) {
-        createOrderForUser(user, cartUuid, user.getAddress(), user.getPhone());
-    }
-
-    @Transactional
-    public void createOrderForUser(User user, String cartUuid, String address, String phone) {
+    public void createOrderForUser(User user, String cartUuid,
+                                   String addressPostcode,
+                                   String addressCountryCode,
+                                   String addressArea1,
+                                   String addressArea2,
+                                   String addressLine1,
+                                   String addressLine2,
+                                   String phone) {
         Order order = new Order();
         CartDetail cart = cartService.getCurrentCart(cartService.getCartUuidFromSuffix(user.getUsername()));
         order.setTotalPrice(cart.getTotalPrice());
         order.setUser(user);
-        order.setAddress(address);
+        order.setAddress_postcode(addressPostcode);
+        order.setAddress_countrycode(addressCountryCode);
+        order.setAddress_area1(addressArea1);
+        order.setAddress_area2(addressArea2);
+        order.setAddress_line1(addressLine1);
+        order.setAddress_line2(addressLine2);
         order.setPhone(phone);
         order.setStatus(OrderStatus.PLACED.ordinal());
         order.setItems(new ArrayList<>());

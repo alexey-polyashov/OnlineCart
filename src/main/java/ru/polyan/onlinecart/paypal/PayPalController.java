@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.polyan.onlinecart.exception.InvalidInputDataException;
+import ru.polyan.onlinecart.exception.MarketError;
 import ru.polyan.onlinecart.model.User;
 import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.UserService;
@@ -38,6 +40,10 @@ public class PayPalController {
     public ResponseEntity<?> createOrder(Principal principal, @PathVariable Long orderId) throws IOException {
         OrdersCreateRequest request = new OrdersCreateRequest();
         User user = userService.findByUsername(principal.getName()).get();
+        ru.polyan.onlinecart.model.Order cartOrder = orderService.findByUserAndId(user, orderId);
+        if(cartOrder.getStatus()==OrderStatus.PAID.ordinal()){
+            return new ResponseEntity<>("Заказ уже оплачен", HttpStatus.BAD_REQUEST);
+        }
         request.prefer("return=representation");
         request.requestBody(payPalService.createOrderRequest(user, orderId));
         HttpResponse<Order> response = payPalClient.execute(request);
@@ -52,10 +58,16 @@ public class PayPalController {
 
         HttpResponse<Order> response = payPalClient.execute(request);
         Order payPalOrder = response.result();
+
+
         if ("COMPLETED".equals(payPalOrder.status())) {
-            long orderId = Long.parseLong(payPalOrder.purchaseUnits().get(0).referenceId());
             User user = userService.findByUsername(principal.getName()).get();
-            ru.polyan.onlinecart.model.Order order = orderService.findByUserAndId(user, orderId);
+            Long cartOrderId = Long.parseLong(payPalOrder.purchaseUnits().get(0).referenceId());
+            ru.polyan.onlinecart.model.Order cartOrder = orderService.findByUserAndId(user, cartOrderId);
+            if(cartOrder.getStatus()==OrderStatus.PAID.ordinal()){
+                return new ResponseEntity<>("Заказ уже оплачен", HttpStatus.BAD_REQUEST);
+            }
+            orderService.setStatus(cartOrderId, OrderStatus.PAID);
             return new ResponseEntity<>("Order completed!", HttpStatus.valueOf(response.statusCode()));
         }
 

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.polyan.onlinecart.dto.OrderDetailsDto;
 import ru.polyan.onlinecart.dto.OrderDto;
 import ru.polyan.onlinecart.dto.OrderItemDto;
+import ru.polyan.onlinecart.exception.MarketError;
 import ru.polyan.onlinecart.model.Order;
 import ru.polyan.onlinecart.model.User;
 import ru.polyan.onlinecart.repositories.ProductRepositoryList;
@@ -32,26 +33,68 @@ public class OrdersApiV1 {
     private final CartService cartService;
 
     @PostMapping(value = "/createorder")
-    public ResponseEntity<?> createOrder(HttpServletRequest request, Principal principal, @RequestParam(required = false, defaultValue = "") String address, @RequestParam(required = false, defaultValue = "") String phone) {
+    public ResponseEntity<?> createOrder(
+            HttpServletRequest request,
+            Principal principal,
+            @RequestParam(required = false, defaultValue = "") String addressPostcode,
+            @RequestParam(required = false, defaultValue = "") String addressCountrycode,
+            @RequestParam(required = false, defaultValue = "") String addressArea1,
+            @RequestParam(required = false, defaultValue = "") String addressArea2,
+            @RequestParam(required = false, defaultValue = "") String addressLine1,
+            @RequestParam(required = false, defaultValue = "") String addressLine2,
+            @RequestParam(required = false, defaultValue = "") String phone
+    ) {
         String uuid = cartService.getCartUuidFromHeader(request);
         CartDetail cartDetail = cartService.getCurrentCart(cartService.getCurrentCartUuid(principal, uuid));
-        List<String> errors = new ArrayList<>();
+        String errors = "";
+        List<String> fields = new ArrayList<>();
         if(cartDetail.getDetails().isEmpty()){
-            errors.add("В корзине нет товаров!");
+            errors = errors.concat("В корзине нет товаров!");
             return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
         }
-        if(address.isEmpty()){
-            errors.add("АДРЕС не указан");
+        if(addressPostcode.isBlank()){
+            errors = errors.concat("Почтовый код не указан; ");
+            fields.add("addressPostcode");
         }
-        if(phone.isEmpty()){
-            errors.add("ТЕЛЕФОН не указан");
+        if(addressCountrycode.isBlank()){
+            errors = errors.concat("Код страны не указан; ");
+            fields.add("addressCountrycode");
+        }
+        if(addressArea1.isBlank()){
+            errors = errors.concat("Страна не указана; ");
+            fields.add("addressArea1");
+        }
+        if(addressArea2.isBlank()){
+            errors = errors.concat("Город не указан; ");
+            fields.add("addressArea2");
+        }
+        if(addressLine1.isBlank()){
+            errors = errors.concat("Улица не указана; ");
+            fields.add("addressLine1");
+        }
+        if(addressLine2.isBlank()){
+            errors = errors.concat("Дом не указан; ");
+            fields.add("addressLine2");
+        }
+        if(phone.isBlank()){
+            errors = errors.concat("Телефон не указан; ");
+            fields.add("phoneField");
         }
         if(!errors.isEmpty()){
-            return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
+            MarketError marketError = new MarketError(errors);
+            marketError.setFieldErrors(fields);
+            return new ResponseEntity(marketError, HttpStatus.BAD_REQUEST);
         }
         User user = userService.findByUsername(principal.getName()).get();
         System.out.println(user.getEmail());
-        orderService.createOrderForUser(user, uuid, address, phone);
+        orderService.createOrderForUser(user, uuid,
+                addressPostcode,
+                addressCountrycode,
+                addressArea1,
+                addressArea2,
+                addressLine1,
+                addressLine2,
+                phone);
         return new ResponseEntity(HttpStatus.OK);
     }
 
