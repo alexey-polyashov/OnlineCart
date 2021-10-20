@@ -25,6 +25,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ProductService {
 
+    private final CategoryService categoryService;
+
     public static final String SMALL_IMAGE = "small";
     public static final String BIG_IMAGE = "big";
     @Value("${utils.products.filestorage}")
@@ -36,6 +38,7 @@ public class ProductService {
     private final static String FILTER_MIN_PRICE = "minprice";
     private final static String FILTER_MAX_PRICE = "maxprice";
     private final static String FILTER_TITLE = "title";
+    private final static String FILTER_CATEGORY = "category";
 
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
@@ -69,6 +72,15 @@ public class ProductService {
                 String ft = entry.getValue();
                 if(!ft.isBlank()){
                     spec = spec.and(ProductSpecifications.titleLike(entry.getValue()));
+                }
+            }
+            if(entry.getKey()==FILTER_CATEGORY && !entry.getValue().isBlank()){
+                String ft = entry.getValue();
+                Long id = Long.valueOf(ft);
+                Category category = categoryService.findById(id).orElseThrow(()->new ResourceNotFoundException("Exception: category id=" + id + " not found."));
+
+                if(!ft.isBlank()){
+                    spec = spec.and(ProductSpecifications.category(category));
                 }
             }
             if (!errors.isEmpty()) {

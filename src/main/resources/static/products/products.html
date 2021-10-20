@@ -1,0 +1,93 @@
+
+<main style = "flex-grow: 1; flex-shrink: 0;flex-basis: auto;">
+
+    <div class="container">
+        <div id = "products_cart">
+            <div style="flex-grow: 1">
+                <h2>Список продуктов</h2>
+            </div>
+            <div>
+                <a href="#!/cart">CART: <span>{{cartSummary}}</span></a>
+            </div>
+        </div>
+        <div>
+            <form class="row g-12 mb-3" ng-submit="loadProducts()">
+                    <div class="col-sm-3">
+                        <label for="minPriceFilter" class="form-label">Мин.цена</label>
+                        <input id="minPriceFilter" class="form-control" ng-model="filter.minPrice" type="text"
+                               aria-describedby="inputGroup-sizing-sm">
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="maxPriceFilter" class="form-label">Макс.цена</label>
+                        <input id="maxPriceFilter" class="form-control" ng-model="filter.maxPrice" type="text"
+                               aria-describedby="inputGroup-sizing-sm">
+                    </div>
+                    <div class="col-sm-3">
+                    <label for="titleFilter" class="form-label">Наименование содержит</label>
+                        <input id="titleFilter" class="form-control" ng-model="filter.titleLike" type="text"
+                               aria-describedby="inputGroup-sizing-sm">
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="categoryFilter" class="form-label">Категория</label>
+                        <select id="categoryFilter"
+                                class="form-select" aria-describedby="inputGroup-sizing-sm"
+                                ng-model="filter.category" ng-options="c.id as c.title for c in categories"
+                                ng-change = "loadProducts()">
+                            <option value = "">--Любая--</option>
+                        </select><br>
+                    </div>
+                    <div class="col-12">
+                        <button id="doFilter" class="btn btn-primary" type="submit">Применить</button>
+                    </div>
+            </form>
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#!/products" ng-click="clicPrevPage()">Пред.</a></li>
+                <li class="page-item {{(pageNumbers[0] == pageCounter) ? 'active' : ''}}"><a class="page-link" href="#!/products" ng-click="goToPage(pageNumbers[0])">{{viewedPageNumbers[0]}}</a></li>
+                <li class="page-item {{(pageNumbers[1] == pageCounter) ? 'active' : ''}}" ng-if="pageNumbers[1]"><a class="page-link" href="#!/products" ng-click="goToPage(pageNumbers[1])">{{viewedPageNumbers[1]}}</a></li>
+                <li class="page-item {{(pageNumbers[2] == pageCounter) ? 'active' : ''}}" ng-if="pageNumbers[2]"><a class="page-link" href="#!/products" ng-click="goToPage(pageNumbers[2])">{{viewedPageNumbers[2]}}</a></li>
+                <li class="page-item"><a class="page-link" href="#!/products" ng-click="clicNextPage()">След.</a></li>
+            </ul>
+        </nav>
+        <table class="table table-hover">
+            <thead class="thead-default">
+            <tr>
+                <th>Код</th>
+                <th>Изображение</th>
+                <th>Наименование</th>
+                <th>Цена</th>
+                <th>Категория</th>
+                <th>Действие</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="p in products">
+                    <td>{{p.id}}</td>
+                    <td><img height="80px" src="{{baseURL_products + p.id}}/getimage/small"></td>
+                    <td>{{p.title}}</td>
+                    <td>{{p.price}}</td>
+                    <td>{{p.categoryTitle}}</td>
+                    <!--<td><a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true" ng-click="deleteProduct(p.id)">Delete</a></td>-->
+                    <td><a href="#!/products" class="btn btn-primary btn-lg active" role="button" aria-pressed="true" ng-click="addToCart(p.id)">В корзину</a></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Total count: <span>{{products_count}}</span></td>
+                </tr>
+            </tfoot>
+        </table>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#!/products" ng-click="clicPrevPage()">Пред.</a></li>
+                <li class="page-item {{(pageNumbers[0] == pageCounter) ? 'active' : ''}}"><a class="page-link" href="#!/products" ng-click="goToPage(pageNumbers[0])">{{viewedPageNumbers[0]}}</a></li>
+                <li class="page-item {{(pageNumbers[1] == pageCounter) ? 'active' : ''}}" ng-if="pageNumbers[1]"><a class="page-link" href="#!/products" ng-click="goToPage(pageNumbers[1])">{{viewedPageNumbers[1]}}</a></li>
+                <li class="page-item {{(pageNumbers[2] == pageCounter) ? 'active' : ''}}" ng-if="pageNumbers[2]"><a class="page-link" href="#!/products" ng-click="goToPage(pageNumbers[2])">{{viewedPageNumbers[2]}}</a></li>
+                <li class="page-item"><a class="page-link" href="#!/products" ng-click="clicNextPage()">След.</a></li>
+            </ul>
+        </nav>
+
+    </div>
+
+</main>
