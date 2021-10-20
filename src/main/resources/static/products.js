@@ -5,6 +5,7 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
     const baseURL_auth =    'http://localhost:8189/onlinecart/api/v1/auth/';
     const baseURL_orders = 'http://localhost:8189/onlinecart/api/v1/orders/';
 
+
     $scope.pageCounter = 0;
     $scope.totalPage = 0;
     $scope.pagesInView = 3;
@@ -102,6 +103,9 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
                     $scope.user.username = null;
                     $scope.user.password = null;
                     $scope.loadOrders();
+
+                    $http.get(baseURL_cart + 'merge');
+
                 }else{
                     $scope.loginError=true;
                 }
@@ -138,6 +142,23 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
     if ($localStorage.marketUser) {
         $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.marketUser.token;
         $scope.username =$localStorage.marketUser.username;
+    }
+
+    $scope.initCart = function(){
+        if(!$localStorage.cartUuid){
+            $http({
+                url: baseURL_cart + 'generate',
+                method: 'GET',
+                params: {}
+            }).then(function(response){
+                $localStorage.cartUuid = response.data.value;
+            });
+        }
+    }
+
+    $scope.initCart();
+    if ($localStorage.cartUuid) {
+        $http.defaults.headers.common['CartUuid'] = $localStorage.cartUuid;
     }
 
     $scope.loadProducts();

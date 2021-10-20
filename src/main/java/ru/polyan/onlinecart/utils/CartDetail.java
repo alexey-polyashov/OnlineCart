@@ -1,5 +1,6 @@
 package ru.polyan.onlinecart.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -12,23 +13,17 @@ import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.ProductService;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Component
-@NoArgsConstructor
 @Data
 public class CartDetail {
 
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private ProductService productService;
-
-    List<OrderItemDto> products;
-    BigDecimal totalPrice;
+    private List<OrderItemDto> products;
+    private BigDecimal totalPrice;
 
     private void recalculate() {
         totalPrice = BigDecimal.ZERO;
@@ -37,8 +32,7 @@ public class CartDetail {
         }
     }
 
-    @PostConstruct
-    public void init() {
+    public CartDetail(){
         this.products = new ArrayList<>();
         this.totalPrice = BigDecimal.ZERO;
     }
@@ -64,7 +58,7 @@ public class CartDetail {
         recalculate();
     }
 
-    public void addToCart(Long id) {
+    public void addToCart(ProductService productService, Long id) {
         if (!add(id)) {
             add(new ProductDto(productService.getProductByID(id).orElseThrow(() -> new ResourceNotFoundException("Exception: product id=" + id + " not found."))));
         }
@@ -86,19 +80,30 @@ public class CartDetail {
         recalculate();
     }
 
-    public BigDecimal getSummary(){
-        return totalPrice;
+    public void merge(CartDetail another) {
+        if(another==null){
+            return;
+        }
+        for (OrderItemDto anotherItem : another.products) {
+            boolean merged = false;
+            for (OrderItemDto myItem : products) {
+                if (myItem.getProductId().equals(anotherItem.getProductId())) {
+                    myItem.changeQuantity(anotherItem.getQuantity());
+                    merged = true;
+                    break;
+                }
+            }
+            if (!merged) {
+                products.add(anotherItem);
+            }
+        }
+        recalculate();
+        another.clear();
     }
 
-    public List<OrderItemDto> getDetail(){
+    @JsonIgnore
+    public List<OrderItemDto> getDetails(){
         return Collections.unmodifiableList(products);
     }
-
-    public void createOrder(){
-        if(orderService.saveOrder(products, totalPrice)){
-            clear();
-        }
-    }
-
 }
 

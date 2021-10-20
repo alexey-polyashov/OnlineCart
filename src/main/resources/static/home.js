@@ -19,6 +19,7 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
                     $scope.user.username = null;
                     $scope.user.password = null;
                     $scope.loadOrders();
+                    $http.get(baseURL_cart + 'merge');
                 }else{
                     $scope.loginError=true;
                 }
@@ -52,9 +53,27 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
         }
     };
 
+    $scope.initCart = function(){
+        if(!$localStorage.cartUuid){
+            $http({
+                url: baseURL_cart + 'generate',
+                method: 'GET',
+                params: {}
+            }).then(function(response){
+            console.log(response);
+                $localStorage.cartUuid = response.data.value;
+            });
+          }
+    }
+
+    $scope.initCart();
+
     if ($localStorage.marketUser) {
         $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.marketUser.token;
         $scope.username =$localStorage.marketUser.username;
+    }
+    if ($localStorage.cartUuid) {
+        $http.defaults.headers.common['CartUuid'] = $localStorage.cartUuid;
     }
 
 });
