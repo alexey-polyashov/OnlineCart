@@ -23,6 +23,10 @@ public class ProductService {
 
     private final ProductRepositoryList productRepository;
 
+    private final static String FILTER_MIN_PRICE = "minprice";
+    private final static String FILTER_MAX_PRICE = "maxprice";
+    private final static String FILTER_TITLE = "title";
+
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
     }
@@ -31,27 +35,27 @@ public class ProductService {
         List<String> errors = new ArrayList<>();
         Specification<Product> spec = Specification.where(null);
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            if(entry.getKey()=="minprice"){
+            if(entry.getKey()==FILTER_MIN_PRICE && !entry.getValue().isBlank()){
                 try {
                     BigDecimal val = NumberUtils.parseNumber(entry.getValue(), BigDecimal.class);
                     if (val.compareTo(new BigDecimal(0)) == 1) {
                         spec = spec.and(ProductSpecifications.priceGreaterOrEqualsThan(val));
                     }
                 }catch (IllegalArgumentException e){
-                    errors.add("Минимальная цена содержит не корректное число");
+                    errors.add("Минимальная цена должна содержать числом");
                 }
             }
-            if(entry.getKey()=="maxprice"){
+            if(entry.getKey()==FILTER_MAX_PRICE && !entry.getValue().isBlank()){
                 try {
                     BigDecimal val = NumberUtils.parseNumber(entry.getValue(), BigDecimal.class);
                     if (val.compareTo(new BigDecimal(0)) == 1) {
                         spec = spec.and(ProductSpecifications.priceLessOrEqualsThan(val));
                     }
                 }catch (IllegalArgumentException e){
-                    errors.add("Максимальная цена содержит не корректное число");
+                    errors.add("Максимальная цена должна содержать числом");
                 }
             }
-            if(entry.getKey()=="title"){
+            if(entry.getKey()==FILTER_TITLE && !entry.getValue().isBlank()){
                 String ft = entry.getValue();
                 if(!ft.isBlank()){
                     spec = spec.and(ProductSpecifications.titleLike(entry.getValue()));
