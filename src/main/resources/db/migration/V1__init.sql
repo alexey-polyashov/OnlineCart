@@ -10,15 +10,15 @@ CREATE TABLE products (
 
 INSERT INTO products (price, title, category_id)
 VALUES
-(10,'product 1', 1),
-(15,'product 2', 1),
-(15,'product 3', 1),
-(20,'product 4', 1),
-(50,'product 5', 2),
-(50,'product 6', 2),
-(50,'product 7', 2),
-(10,'product 8', 3),
-(18,'product 9', 3),
+(10,'Сыр', 1),
+(15,'Молоко', 1),
+(15,'Яйца (6шт)', 3),
+(50,'Сметана 10%', 1),
+(20,'Колбаса сырокопченная', 2),
+(50,'Колбаса варенная', 2),
+(80,'Окорок свинной', 4),
+(50,'Сметана 15%', 1),
+(10,'Сметана 20%', 1),
 (19,'product 10', 3),
 (19,'product 12', 4),
 (19,'product 13', 4),
@@ -40,24 +40,29 @@ CREATE TABLE categories (
 
 INSERT INTO categories (title)
 VALUES
-('Category 1'),
-('Category 2'),
-('Category 3'),
-('Category 4'),
-('Category 5'),
-('Category 6'),
-('Category 7'),
-('Category 8');
+('Молочные продукты'),
+('Колбасные изделия'),
+('Яйца'),
+('Охлажденное мясо'),
+('Птица'),
+('Рыба'),
+('Хлебобулочные изделия'),
+('Чай');
 
 CREATE TABLE orders (
     id bigserial primary key,
     user_id    bigint,
     phone      varchar(50),
-    address     varchar(250),
+    address_postcode     varchar(60),
+    address_countrycode     varchar(2),
+    address_line1     varchar(300),
+    address_line2     varchar(300),
+    address_area1     varchar(300),
+    address_area2     varchar(120),
     create_time timestamp default current_timestamp,
     update_time timestamp default current_timestamp,
     total_price numeric(15,2),
-    status      varchar(50)
+    status      int
 );
 
 CREATE TABLE order_items (

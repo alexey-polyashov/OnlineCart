@@ -10,6 +10,7 @@ import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 import ru.polyan.onlinecart.model.Category;
 import ru.polyan.onlinecart.services.CategoryService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,16 +30,17 @@ public class CategoryApiV1 {
        return new ResponseEntity<>(new CategoryDto(category), HttpStatus.OK);
     }
 
-    @GetMapping(value="")
+    @GetMapping(value="/")
     @ResponseBody
-    public ResponseEntity<?> geCategoryById(){
+    public ResponseEntity<?> geCategories(){
         try{
             List<Category> categories = categoryService.findAll();
             List<CategoryDto> categoryDtos = categories.stream().map(c->new CategoryDto(c)).collect(Collectors.toList());
+            categoryDtos.sort(null);
             return new ResponseEntity<>(categoryDtos, HttpStatus.OK);
         }catch (Exception e){
             log.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

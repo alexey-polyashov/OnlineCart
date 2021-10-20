@@ -39,6 +39,7 @@ public class ProductsApiV1 {
     public Page<ProductDto> findProducts(@RequestParam(name = "minprice", required = false, defaultValue = "-1") String minprice,
                                          @RequestParam(name = "maxprice", required = false, defaultValue = "-1") String maxprice,
                                          @RequestParam(name = "title", required = false, defaultValue = "") String title,
+                                         @RequestParam(name = "category", required = false, defaultValue = "-1") String category,
                                          @RequestParam(required = false, defaultValue = "0") int page,
                                          @RequestParam(required = false, defaultValue = "5") int recordsOnPage){
         Page<ProductDto> productDtoPage;
@@ -47,6 +48,9 @@ public class ProductsApiV1 {
         params.put("maxprice", maxprice);
         params.put("minprice", minprice);
         params.put("title", title);
+        if(!category.equals("-1")){
+            params.put("category", category);
+        }
         productPage = productService.findAll(page, recordsOnPage, params);
         productDtoPage = productPage.map(p->new ProductDto(p));
         return productDtoPage;
