@@ -5,7 +5,7 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
     const baseURL_auth =    'http://localhost:8189/onlinecart/api/v1/auth/';
     const baseURL_orders = 'http://localhost:8189/onlinecart/api/v1/orders/';
 
-
+    $scope.baseURL_products = baseURL_products;
     $scope.pageCounter = 0;
     $scope.totalPage = 0;
     $scope.pagesInView = 3;

@@ -4,6 +4,7 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
     const baseURL_cart  = 'http://localhost:8189/onlinecart/api/v1/cart/';
     const baseURL_auth =    'http://localhost:8189/onlinecart/api/v1/auth/';
     const baseURL_orders = 'http://localhost:8189/onlinecart/api/v1/orders/';
+    const baseURL_paypalController = 'http://localhost:8189/onlinecart/paypal/';
 
     $scope.ordersListNotEmpty = false;
 
@@ -123,6 +124,38 @@ angular.module('app', ['ngStorage']).controller('indexController', function ($sc
     $scope.initCart();
     if ($localStorage.cartUuid) {
         $http.defaults.headers.common['CartUuid'] = $localStorage.cartUuid;
+    }
+
+    $scope.confirmPay = function(orderId, paymentId, payerId){
+    console.log("confirmPay:paymentId " + paymentId);
+    console.log("confirmPay:payerId " + payerId);
+       $http({
+            url: baseURL_paypalController + 'complete/payment',
+            method: 'POST',
+            params: {'orderId':orderId, 'paymentId':paymentId, 'payerId':payerId}
+        }).then(function(response){
+            $scope.loadOrders();
+        });
+    }
+
+    $scope.pay = function(orderId){
+       $http({
+            url: baseURL_paypalController + 'make/payorder',
+            method: 'POST',
+            params: {'orderId':orderId}
+        }).then(function(response){
+            document.location.href = response.data.redirect_url;
+        });
+    }
+
+    const searchString = new URLSearchParams(window.location.search);
+
+    const paymentId = searchString.get('paymentId');
+    const payerId = searchString.get('PayerID');
+    const orderId = searchString.get('orderId');
+
+    if(paymentId!=null && payerId!=null){
+        $scope.confirmPay(orderId, paymentId, payerId);
     }
 
     $scope.loadOrders();
