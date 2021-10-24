@@ -5,13 +5,9 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=products
-#    username: postgres
-#    password: pgadmin
-    url: jdbc:postgres://sgkdlwtzgxgonb:bc0d69ffa0cfdfd01a4082bf8faefebe9ec5c69fd02ba0eabd338a58ed4efbfe@ec2-54-228-99-58.eu-west-1.compute.amazonaws.com:5432/d2jm4rpch5tj24
-    username: sgkdlwtzgxgonb
-    password: bc0d69ffa0cfdfd01a4082bf8faefebe9ec5c69fd02ba0eabd338a58ed4efbfe
-    sslmode: require
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=products
+    username: postgres
+    password: pgadmin
 #    driver-class-name: org.h2.Driver
 #    url: jdbc:h2:mem:mydatabase;MODE=PostgreSQL
 #    username: sa
