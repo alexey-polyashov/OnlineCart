@@ -1,24 +1,15 @@
 package ru.polyan.onlinecart;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import ru.polyan.onlinecart.model.*;
+
 import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.ProductService;
 import ru.polyan.onlinecart.utils.CartDetail;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @SpringBootTest
 @ActiveProfiles("test")

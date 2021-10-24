@@ -1,25 +1,17 @@
 package ru.polyan.onlinecart;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.polyan.onlinecart.dto.OrderItemDto;
-import ru.polyan.onlinecart.model.Category;
-import ru.polyan.onlinecart.model.Product;
+
+import org.springframework.test.context.ActiveProfiles;
 import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.ProductService;
 import ru.polyan.onlinecart.utils.CartDetail;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-
 @SpringBootTest
+@ActiveProfiles("test")
 public class CartDetailTest {
     @Autowired
     private CartDetail cartDetail;

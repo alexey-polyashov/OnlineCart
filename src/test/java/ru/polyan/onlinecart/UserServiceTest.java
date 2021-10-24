@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 import ru.polyan.onlinecart.model.User;
-import ru.polyan.onlinecart.repositories.UserRepository;
 import ru.polyan.onlinecart.services.UserService;
 
 import java.util.NoSuchElementException;

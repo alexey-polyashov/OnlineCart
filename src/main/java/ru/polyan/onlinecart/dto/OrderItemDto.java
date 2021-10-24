@@ -1,5 +1,7 @@
 package ru.polyan.onlinecart.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.polyan.onlinecart.exception.ResourceNotFoundException;
@@ -11,12 +13,18 @@ import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
+@ApiModel(description = "Сущность 'Позиция заказа'")
 public class OrderItemDto {
 
+    @ApiModelProperty(value = "ID продукта")
     private Long productId;
+    @ApiModelProperty(value = "Описание продукта")
     private ProductDto product;
+    @ApiModelProperty(value = "Цена товара")
     private BigDecimal price;
+    @ApiModelProperty(value = "Количество товара в заказе")
     private int quantity;
+    @ApiModelProperty(value = "Общая стоимость позиции")
     private BigDecimal totalPrice;
 
     public OrderItemDto(ProductDto product){

@@ -1,5 +1,9 @@
 package ru.polyan.onlinecart.controllers.products;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,8 +17,6 @@ import ru.polyan.onlinecart.model.Product;
 import ru.polyan.onlinecart.services.CategoryService;
 import ru.polyan.onlinecart.services.ProductService;
 import ru.polyan.onlinecart.exception.ResourceNotFoundException;
-
-import javax.activation.FileTypeMap;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -29,6 +31,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/products/product/")
 @Slf4j
+@Api(value = "product", tags = "Контролер товаров", description = "Управляет товарами")
 public class ProductsApiV1 {
 
     private final ProductService productService;
@@ -36,6 +39,17 @@ public class ProductsApiV1 {
 
     @GetMapping(value = "")
     @ResponseBody
+    @ApiOperation(
+            value = "Постраничное получение списка продуктов с использованием фильтров"
+    )
+    @ApiImplicitParams(value={
+            @ApiImplicitParam(name="miprice", value = "Минимальная цена", required = false),
+            @ApiImplicitParam(name="maxprice", value = "Максимальная цена", required = false),
+            @ApiImplicitParam(name="title", value = "Фильтр по названию товара", required = false),
+            @ApiImplicitParam(name="category", value = "ID выбранной категории", required = false),
+            @ApiImplicitParam(name="page", value = "Номер страницы", required = false, defaultValue = "0"),
+            @ApiImplicitParam(name="recordsOnPage", value = "Минимальная цена", required = false, defaultValue = "5")
+    })
     public Page<ProductDto> findProducts(@RequestParam(name = "minprice", required = false, defaultValue = "-1") String minprice,
                                          @RequestParam(name = "maxprice", required = false, defaultValue = "-1") String maxprice,
                                          @RequestParam(name = "title", required = false, defaultValue = "") String title,
