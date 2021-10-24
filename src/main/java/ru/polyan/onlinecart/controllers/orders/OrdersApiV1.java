@@ -52,31 +52,31 @@ public class OrdersApiV1 {
             errors = errors.concat("В корзине нет товаров!");
             return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
         }
-        if(addressPostcode.isBlank()){
+        if(addressPostcode.isEmpty()){
             errors = errors.concat("Почтовый код не указан; ");
             fields.add("addressPostcode");
         }
-        if(addressCountrycode.isBlank()){
+        if(addressCountrycode.isEmpty()){
             errors = errors.concat("Код страны не указан; ");
             fields.add("addressCountrycode");
         }
-        if(addressArea1.isBlank()){
+        if(addressArea1.isEmpty()){
             errors = errors.concat("Страна не указана; ");
             fields.add("addressArea1");
         }
-        if(addressArea2.isBlank()){
+        if(addressArea2.isEmpty()){
             errors = errors.concat("Город не указан; ");
             fields.add("addressArea2");
         }
-        if(addressLine1.isBlank()){
+        if(addressLine1.isEmpty()){
             errors = errors.concat("Улица не указана; ");
             fields.add("addressLine1");
         }
-        if(addressLine2.isBlank()){
+        if(addressLine2.isEmpty()){
             errors = errors.concat("Дом не указан; ");
             fields.add("addressLine2");
         }
-        if(phone.isBlank()){
+        if(phone.isEmpty()){
             errors = errors.concat("Телефон не указан; ");
             fields.add("phoneField");
         }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 import ru.polyan.onlinecart.model.User;
 import ru.polyan.onlinecart.repositories.UserRepository;
 import ru.polyan.onlinecart.services.UserService;
@@ -21,7 +22,7 @@ public class UserServiceTest {
     @Test
     public void findByName() {
         try {
-            User user = userService.findByUsername("user").orElseThrow();
+            User user = userService.findByUsername("user").orElseThrow(()->new NoSuchElementException("User not find"));
         } catch (NoSuchElementException e) {
             Assertions.fail("User not find");
         }
@@ -29,7 +30,9 @@ public class UserServiceTest {
 
     @Test
     public void findByNameNoSuchUser() {
-        Throwable check = Assertions.assertThrows(NoSuchElementException.class, ()->{userService.findByUsername("user2").orElseThrow();});
+        Throwable check = Assertions.assertThrows(NoSuchElementException.class, ()->{
+            userService.findByUsername("user2").orElseThrow(()->new ResourceNotFoundException("User not find"));
+        });
         Assertions.assertEquals(check.getClass(), NoSuchElementException.class);
     }
 

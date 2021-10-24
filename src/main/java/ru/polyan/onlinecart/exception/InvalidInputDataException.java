@@ -1,5 +1,6 @@
 package ru.polyan.onlinecart.exception;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,7 @@ public class InvalidInputDataException extends RuntimeException{
     }
 
     public InvalidInputDataException(String message) {
-        this(List.of(message));
+        this(Arrays.asList(message));
     }
 
 }

@@ -48,7 +48,7 @@ public class ProductService {
         List<String> errors = new ArrayList<>();
         Specification<Product> spec = Specification.where(null);
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            if(entry.getKey()==FILTER_MIN_PRICE && !entry.getValue().isBlank()){
+            if(entry.getKey()==FILTER_MIN_PRICE && !entry.getValue().isEmpty()){
                 try {
                     BigDecimal val = NumberUtils.parseNumber(entry.getValue(), BigDecimal.class);
                     if (val.compareTo(new BigDecimal(0)) == 1) {
@@ -58,7 +58,7 @@ public class ProductService {
                     errors.add("Минимальная цена должна содержать числом");
                 }
             }
-            if(entry.getKey()==FILTER_MAX_PRICE && !entry.getValue().isBlank()){
+            if(entry.getKey()==FILTER_MAX_PRICE && !entry.getValue().isEmpty()){
                 try {
                     BigDecimal val = NumberUtils.parseNumber(entry.getValue(), BigDecimal.class);
                     if (val.compareTo(new BigDecimal(0)) == 1) {
@@ -68,18 +68,18 @@ public class ProductService {
                     errors.add("Максимальная цена должна содержать числом");
                 }
             }
-            if(entry.getKey()==FILTER_TITLE && !entry.getValue().isBlank()){
+            if(entry.getKey()==FILTER_TITLE && !entry.getValue().isEmpty()){
                 String ft = entry.getValue();
-                if(!ft.isBlank()){
+                if(!ft.isEmpty()){
                     spec = spec.and(ProductSpecifications.titleLike(entry.getValue()));
                 }
             }
-            if(entry.getKey()==FILTER_CATEGORY && !entry.getValue().isBlank()){
+            if(entry.getKey()==FILTER_CATEGORY && !entry.getValue().isEmpty()){
                 String ft = entry.getValue();
                 Long id = Long.valueOf(ft);
                 Category category = categoryService.findById(id).orElseThrow(()->new ResourceNotFoundException("Exception: category id=" + id + " not found."));
 
-                if(!ft.isBlank()){
+                if(!ft.isEmpty()){
                     spec = spec.and(ProductSpecifications.category(category));
                 }
             }
