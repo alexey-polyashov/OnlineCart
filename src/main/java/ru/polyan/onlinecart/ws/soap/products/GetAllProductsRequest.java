@@ -36,45 +36,45 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "pageNumber",
+    "page",
     "pageSize"
 })
 @XmlRootElement(name = "getAllProductsRequest")
 public class GetAllProductsRequest {
 
-    protected int pageNumber;
-    protected int pageSize;
+    protected int page;
+    protected int recordsOnPage;
 
     /**
      * Gets the value of the pageNumber property.
      * 
      */
-    public int getPageNumber() {
-        return pageNumber;
+    public int getPage() {
+        return page;
     }
 
     /**
      * Sets the value of the pageNumber property.
      * 
      */
-    public void setPageNumber(int value) {
-        this.pageNumber = value;
+    public void setPage(int value) {
+        this.page = value;
     }
 
     /**
      * Gets the value of the pageSize property.
      * 
      */
-    public int getPageSize() {
-        return pageSize;
+    public int getRecordsOnPage() {
+        return recordsOnPage;
     }
 
     /**
      * Sets the value of the pageSize property.
      * 
      */
-    public void setPageSize(int value) {
-        this.pageSize = value;
+    public void setRecordsOnPage(int value) {
+        this.recordsOnPage = value;
     }
 
 }

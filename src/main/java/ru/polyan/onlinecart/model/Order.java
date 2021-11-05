@@ -9,7 +9,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name="orders")
@@ -29,9 +31,6 @@ public class Order {
     @JoinColumn(name="user_id")
     private User user;
 
-    @Column(name="address")
-    private String address;
-
     @Column(name="phone")
     private String phone;
 
@@ -49,5 +48,27 @@ public class Order {
     @OneToMany(mappedBy = "order")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     List<OrderItem> orderItemList;
+
+    @Column(name = "status")
+    private int status;
+
+    @Column(name = "address_postcode")
+    private String address_postcode;
+    @Column(name = "address_countrycode")
+    private String address_countrycode;
+    @Column(name = "address_line1")
+    private String address_line1;
+    @Column(name = "address_line2")
+    private String address_line2;
+    @Column(name = "address_area1")
+    private String address_area1;
+    @Column(name = "address_area2")
+    private String address_area2;
+
+    public String getFullAddress(){
+        List<String> adrStr = Arrays.asList(address_postcode, address_countrycode, address_area1, address_area2, address_line1, address_line2);
+        String address = adrStr.stream().filter(f->f!=null && !f.isEmpty()).collect(Collectors.joining(", "));
+        return address;
+    }
 
 }

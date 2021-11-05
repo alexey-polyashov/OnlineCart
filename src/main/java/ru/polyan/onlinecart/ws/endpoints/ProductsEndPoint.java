@@ -1,11 +1,13 @@
 package ru.polyan.onlinecart.ws.endpoints;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+import ru.polyan.onlinecart.dto.ProductsRequestDTO;
 import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 import ru.polyan.onlinecart.model.Product;
 import ru.polyan.onlinecart.services.ProductService;
@@ -20,6 +22,7 @@ public class ProductsEndPoint {
 
     private static final String NAMESPACE_URI = "http://www.polyan.ru/api/products";
     private final ProductService productService;
+    private final ModelMapper modelMapper;
 
     public static final Function<Product, SoapProduct> functionEntityToSoap = product -> {
         SoapProduct soapProduct = new SoapProduct();
@@ -47,8 +50,9 @@ public class ProductsEndPoint {
     @ResponsePayload
     public GetAllProductsResponse getAllProducts(@RequestPayload GetAllProductsRequest request) {
         GetAllProductsResponse response = new GetAllProductsResponse();
+        ProductsRequestDTO productsRequestDTO = modelMapper.map(request, ProductsRequestDTO.class);
         Page<Product> productPage;
-        productPage = productService.findAll(request.getPageNumber(), request.getPageSize(), new HashMap<String, String>());
+        productPage = productService.findAll(productsRequestDTO);
         productPage.forEach(product-> response.getProduct().add(functionEntityToSoap.apply(product)));
         return response;
     }

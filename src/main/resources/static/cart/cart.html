@@ -1,0 +1,68 @@
+<main>
+    <div class="container">
+        <div  ng-if="cartNotEmpty"><a role="button" class="btn btn-danger" ng-click="clearCart()">Удалить все из корзины</a></div>
+        <div  ng-if="!cartNotEmpty"><h3 class="text-info" align = "center">Корзина пуста!</h3></div>
+        <table class="table table-hover"  ng-if="cartNotEmpty">
+            <thead class="thead-default">
+            <tr>
+                <th>Наименование</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Стоимость</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="c in cartDetail">
+                <td>{{c.product.title}}</td>
+                <td>{{c.price}}</td>
+                <td><button type="button" class="btn btn-info" ng-click="decreaseItem(c.product.id)">-</button>{{c.quantity}}<button type="button" class="btn btn-info" ng-click="addItem(c.product.id)">+</button></td>
+                <td>{{c.totalPrice}}</td>
+                <td><a class="btn btn-primary btn-lg active" role="button" aria-pressed="true" ng-click="deleteItem(c.product.id)">Удалить</a></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3">ИТОГО: <span>{{cartSummary}}</span></td>
+            </tr>
+            </tfoot>
+        </table>
+        <span id = "cart_message_block"></span>
+
+        <div ng-show="cartNotEmpty" class="address">
+
+            <form novalidate ng-submit="createOrder()" class="js-form-address">
+
+                <div class="form-group col-md-6">
+                    <label>Адрес доставки</label>
+                    <div>
+                        <label for="addressPostcode">Почтовый индекс</label>
+                        <input class="form-control" type="text" ng-model="neworder.addressPostcode" id="addressPostcode" required>
+                        <label for="addressPostcode">Код страны</label>
+                        <input class="form-control" type="text" ng-model="neworder.addressCountrycode" id="addressCountrycode" required>
+                        <label for="addressArea1">Страна / область</label>
+                        <input class="form-control" type="text" ng-model="neworder.addressArea1" id="addressArea1" required>
+                        <label for="addressArea1">Город / район</label>
+                        <input class="form-control" type="text" ng-model="neworder.addressArea2" id="addressArea2" required>
+                        <label for="addressLine1">Улица</label>
+                        <input class="form-control" type="text" ng-model="neworder.addressLine1" id="addressLine1" required>
+                        <label for="addressLine2">Дом</label>
+                        <input class="form-control" type="text" ng-model="neworder.addressLine2" id="addressLine2" required>
+                    </div>
+                </div>
+                <p></p>
+                <div class="form-group col-md-6">
+                    <label for="phone">Телефон получателя</label>
+                    <input class="form-control" type="text" ng-model="neworder.phone" id="phone" required>
+                </div>
+                <p></p>
+                <div>
+                    <button ng-show="isUserLoggedIn()" class="btn btn-primary" type="submit">Оформить заказ</button>
+                    <button ng-show="!isUserLoggedIn()" class="btn btn-secondary">Выполните вход для заказа</button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</main>

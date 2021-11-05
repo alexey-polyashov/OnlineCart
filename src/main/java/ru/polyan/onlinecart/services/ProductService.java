@@ -1,12 +1,13 @@
 package ru.polyan.onlinecart.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.NumberUtils;
 import ru.polyan.onlinecart.dto.ProductDto;
+import ru.polyan.onlinecart.dto.ProductsRequestDTO;
 import ru.polyan.onlinecart.exception.InvalidInputDataException;
 import ru.polyan.onlinecart.model.Category;
 import ru.polyan.onlinecart.model.Product;
@@ -15,53 +16,47 @@ import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 import ru.polyan.onlinecart.repositories.specifications.ProductSpecifications;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
 
+    private final CategoryService categoryService;
+
+    public static final String SMALL_IMAGE = "small";
+    public static final String BIG_IMAGE = "big";
+    @Value("${utils.products.filestorage}")
+    private String fileStorage;
     private final ProductRepositoryList productRepository;
 
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
     }
 
-    public Page<Product> findAll(int page, int recordsOrPage, Map<String, String> params) {
+    public Page<Product> findAll(ProductsRequestDTO productsRequestDTO){
         List<String> errors = new ArrayList<>();
         Specification<Product> spec = Specification.where(null);
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            if(entry.getKey()=="minprice"){
-                try {
-                    BigDecimal val = NumberUtils.parseNumber(entry.getValue(), BigDecimal.class);
-                    if (val.compareTo(new BigDecimal(0)) == 1) {
-                        spec = spec.and(ProductSpecifications.priceGreaterOrEqualsThan(val));
-                    }
-                }catch (IllegalArgumentException e){
-                    errors.add("Минимальная цена содержит не корректное число");
-                }
-            }
-            if(entry.getKey()=="maxprice"){
-                try {
-                    BigDecimal val = NumberUtils.parseNumber(entry.getValue(), BigDecimal.class);
-                    if (val.compareTo(new BigDecimal(0)) == 1) {
-                        spec = spec.and(ProductSpecifications.priceLessOrEqualsThan(val));
-                    }
-                }catch (IllegalArgumentException e){
-                    errors.add("Максимальная цена содержит не корректное число");
-                }
-            }
-            if(entry.getKey()=="title"){
-                String ft = entry.getValue();
-                if(!ft.isBlank()){
-                    spec = spec.and(ProductSpecifications.titleLike(entry.getValue()));
-                }
-            }
-            if (!errors.isEmpty()) {
-                throw new InvalidInputDataException(errors);
-            }
+        if(productsRequestDTO.getMinprice().compareTo(BigDecimal.ZERO)==1){
+            spec = spec.and(ProductSpecifications.priceGreaterOrEqualsThan(productsRequestDTO.getMinprice()));
         }
-        return productRepository.findAll(spec, PageRequest.of(page, recordsOrPage));
+        if(productsRequestDTO.getMaxprice().compareTo(BigDecimal.ZERO)==1){
+            spec = spec.and(ProductSpecifications.priceLessOrEqualsThan(productsRequestDTO.getMaxprice()));
+        }
+        if(!productsRequestDTO.getTitle().trim().isEmpty()){
+            spec = spec.and(ProductSpecifications.titleLike(productsRequestDTO.getTitle()));
+        }
+        Long catId = productsRequestDTO.getCategoryId();
+        if(catId>0){
+            Category category = categoryService.findById(
+                    catId
+            ).orElseThrow(()->new ResourceNotFoundException("Exception: category id=" + catId + " not found."));
+            spec = spec.and(ProductSpecifications.category(category));
+        }
+        return productRepository.findAll(spec, PageRequest.of(productsRequestDTO.getPage(), productsRequestDTO.getRecordsOnPage()));
     }
 
     public Optional<Product> getProductByID(Long id) {
@@ -84,4 +79,26 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
+    public Path getImageFile(Long id, String size) {
+
+        long interval = ((id / 500)+1) * 500;
+        String pathString = fileStorage + "/" + interval + "/" + id;
+        switch (size){
+            case SMALL_IMAGE:
+                pathString = pathString.concat("/small.jpg");
+                break;
+            case BIG_IMAGE:
+                pathString = pathString.concat("/big.jpg");
+                break;
+            default:
+                pathString = fileStorage + "/default/small.jpg";
+        }
+        Path filePath = Paths.get(pathString);
+        if (!Files.exists(filePath)) {
+            filePath = Paths.get(fileStorage + "/default/small.jpg");
+        }
+
+        return filePath;
+
+    }
 }

@@ -1,0 +1,41 @@
+<main>
+    <div class="container">
+        <h5 align = "center">Список заказов</h5>
+        <div ng-show="isUserLoggedIn() && ordersListNotEmpty">
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Номер</td>
+                    <td>Дата</td>
+                    <td>Адрес доставки</td>
+                    <td>Телефон</td>
+                    <td>Стоимость</td>
+                    <td>Статус</td>
+                    <td>Действие</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="o in orders" id="order_id_{{o.id}}">
+                    <td   ng-click="showorder(o.id)">{{o.id}}</td>
+                    <td   ng-click="showorder(o.id)">{{o.createDate}}</td>
+                    <td style = "max-width:50%;word-break: break-all;"  ng-click="showorder(o.id)">{{o.address}}</td>
+                    <td ng-click="showorder(o.id)">{{o.phone}}</td>
+                    <td ng-click="showorder(o.id)">{{o.price}}</td>
+                    <td ng-click="showorder(o.id)"
+                        style = "text-align: center; vertical-align: middle;"
+                        class = "p-2 m-2"><span class="btn"
+                                                ng-class="{'btn-danger':o.status=='PLACED', 'btn-success':o.status!='PLACED'}"
+                                            >{{o.statusView}}</span></td>
+                    <td>
+                        <a ng-click="pay(o.id)" class="btn btn-primary" ng-if="o.status=='PLACED'">Оплатить</a>
+                        <span ng-if="o.status!='PLACED'" class = "text-grey">Не требуется</span>
+                    </td>
+                </tr>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div ng-show="!isUserLoggedIn() || !ordersListNotEmpty"><h3 class="text-info" align = "center">Список заказов пустой!</h3></div>
+    </div>
+</main>

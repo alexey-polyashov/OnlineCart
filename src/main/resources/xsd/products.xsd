@@ -6,8 +6,8 @@
     <xs:element name="getAllProductsRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="pageNumber" type="xs:int"/>
-                <xs:element name="pageSize" type="xs:int"/>
+                <xs:element name="page" type="xs:int"/>
+                <xs:element name="recordsOnPage" type="xs:int"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

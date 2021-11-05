@@ -1,48 +1,72 @@
 package ru.polyan.onlinecart.controllers.products;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.polyan.onlinecart.dto.ProductDto;
+import ru.polyan.onlinecart.dto.ProductsRequestDTO;
 import ru.polyan.onlinecart.model.Category;
 import ru.polyan.onlinecart.model.Product;
 import ru.polyan.onlinecart.services.CategoryService;
 import ru.polyan.onlinecart.services.ProductService;
 import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 
+import javax.validation.Valid;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/products/product/")
 @Slf4j
+@Api(value = "product", tags = "Контролер товаров", description = "Управляет товарами")
 public class ProductsApiV1 {
 
     private final ProductService productService;
     private final CategoryService categoryService;
 
     @GetMapping(value = "")
+    //@PostMapping(value = "")
     @ResponseBody
-    public Page<ProductDto> findProducts(@RequestParam(name = "minprice", required = false, defaultValue = "-1") String minprice,
-                                         @RequestParam(name = "maxprice", required = false, defaultValue = "-1") String maxprice,
+    @ApiImplicitParams(value={
+            @ApiImplicitParam(name="miprice", value = "Минимальная цена", required = false),
+            @ApiImplicitParam(name="maxprice", value = "Максимальная цена", required = false),
+            @ApiImplicitParam(name="title", value = "Фильтр по названию товара", required = false),
+            @ApiImplicitParam(name="category", value = "ID выбранной категории", required = false),
+            @ApiImplicitParam(name="page", value = "Номер страницы", required = false, defaultValue = "0"),
+            @ApiImplicitParam(name="recordsOnPage", value = "Минимальная цена", required = false, defaultValue = "5")
+    })
+    public Page<ProductDto> findProducts(@RequestParam(name = "minprice", required = false, defaultValue = "-1") BigDecimal minprice,
+                                         @RequestParam(name = "maxprice", required = false, defaultValue = "-1") BigDecimal maxprice,
                                          @RequestParam(name = "title", required = false, defaultValue = "") String title,
+                                         @RequestParam(name = "category", required = false, defaultValue = "-1") Long category,
                                          @RequestParam(required = false, defaultValue = "0") int page,
                                          @RequestParam(required = false, defaultValue = "5") int recordsOnPage){
         Page<ProductDto> productDtoPage;
         Page<Product> productPage;
-        Map<String, String> params = new HashMap<>();
-        params.put("maxprice", maxprice);
-        params.put("minprice", minprice);
-        params.put("title", title);
-        productPage = productService.findAll(page, recordsOnPage, params);
+
+        ProductsRequestDTO productsRequestDTO = new ProductsRequestDTO();
+        productsRequestDTO.setMinprice(minprice);
+        productsRequestDTO.setMaxprice(maxprice);
+        productsRequestDTO.setTitle(title);
+        productsRequestDTO.setCategoryId(category);
+        productsRequestDTO.setPage(page);
+        productsRequestDTO.setRecordsOnPage(recordsOnPage);
+
+        productPage = productService.findAll(productsRequestDTO);
         productDtoPage = productPage.map(p->new ProductDto(p));
         return productDtoPage;
     }
@@ -110,5 +134,20 @@ public class ProductsApiV1 {
         }
 
     }
+
+    @GetMapping(value = "/{id}/getimage/{size}")
+    @ResponseBody
+    public ResponseEntity<byte[]> getImageByID(@PathVariable Long id, @PathVariable String size) {
+        Path imgPath = productService.getImageFile(id, size);
+        try {
+            return ResponseEntity.ok().contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE)).body(Files.readAllBytes(imgPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ResourceNotFoundException("File not found");
+        }
+    }
+
+
+
 
 }

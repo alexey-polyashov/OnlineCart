@@ -1,6 +1,5 @@
 package ru.polyan.onlinecart.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import ru.polyan.onlinecart.model.Order;
@@ -13,4 +12,5 @@ import java.util.Optional;
 public interface OrdersRepository extends CrudRepository<Order, Long> {
     List<Order> findByUser(User user);
     Optional<Order> findByUserAndId(User user, Long Id);
+    Optional<Order> findById(Long Id);
 }
