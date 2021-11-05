@@ -29,6 +29,8 @@
             </tbody>
         </table>
         <p></p>
+        <p id="cancelOrder" class = "p-3 mb-2 text-white bg-danger" >Отменить заказ</p>
+        <p></p>
         <p id="orderStatus" class = "p-3 mb-2 text-white" ng-class="{'bg-danger' : orderNotPaid==true, 'bg-success' : orderNotPaid==false}">{{order.statusView}}</p>
         <p></p>
         <div id="paypal-buttons" ng-if="orderNotPaid==true"></div>
