@@ -8,7 +8,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.polyan.onlinecart.dto.ProductDto;
 import ru.polyan.onlinecart.dto.ProductsRequestDTO;
-import ru.polyan.onlinecart.exception.InvalidInputDataException;
 import ru.polyan.onlinecart.model.Category;
 import ru.polyan.onlinecart.model.Product;
 import ru.polyan.onlinecart.repositories.ProductRepositoryList;
@@ -38,7 +37,6 @@ public class ProductService {
     }
 
     public Page<Product> findAll(ProductsRequestDTO productsRequestDTO){
-        List<String> errors = new ArrayList<>();
         Specification<Product> spec = Specification.where(null);
         if(productsRequestDTO.getMinprice().compareTo(BigDecimal.ZERO)==1){
             spec = spec.and(ProductSpecifications.priceGreaterOrEqualsThan(productsRequestDTO.getMinprice()));
@@ -47,7 +45,7 @@ public class ProductService {
             spec = spec.and(ProductSpecifications.priceLessOrEqualsThan(productsRequestDTO.getMaxprice()));
         }
         if(!productsRequestDTO.getTitle().trim().isEmpty()){
-            spec = spec.and(ProductSpecifications.titleLike(productsRequestDTO.getTitle()));
+            spec = spec.and(ProductSpecifications.titleLike(productsRequestDTO.getTitle().toLowerCase()));
         }
         Long catId = productsRequestDTO.getCategoryId();
         if(catId>0){
@@ -60,8 +58,7 @@ public class ProductService {
     }
 
     public Optional<Product> getProductByID(Long id) {
-        Optional<Product> prod = productRepository.findById(id);
-        return prod;
+        return productRepository.findById(id);
     }
 
     public ProductDto addProduct(String title, BigDecimal price, Category category)  {

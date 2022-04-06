@@ -4,8 +4,10 @@ server:
     context-path: /onlinecart
 
 spring:
+
   flyway:
     locations: classpath:/db/test
+
   datasource:
 #    driver-class-name: org.postgresql.Driver
 #    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=products
@@ -21,6 +23,8 @@ spring:
       hibernate:
 #        dialect: org.hibernate.dialect.PostgreSQL94Dialect
         dialect: org.hibernate.dialect.H2Dialect
+
+
   h2:
     console:
       enabled: true

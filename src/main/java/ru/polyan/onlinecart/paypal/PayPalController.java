@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.polyan.onlinecart.exception.InvalidInputDataException;
-import ru.polyan.onlinecart.exception.MarketError;
 import ru.polyan.onlinecart.model.User;
 import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.UserService;
@@ -24,7 +22,6 @@ import ru.polyan.onlinecart.utils.OrderStatus;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/v1/paypal")

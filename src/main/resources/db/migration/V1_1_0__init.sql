@@ -8,46 +8,12 @@ CREATE TABLE products (
     category_id bigint
 );
 
-INSERT INTO products (price, title, category_id)
-VALUES
-(10,'Сыр', 1),
-(15,'Молоко', 1),
-(15,'Яйца (6шт)', 3),
-(50,'Сметана 10%', 1),
-(20,'Колбаса сырокопченная', 2),
-(50,'Колбаса варенная', 2),
-(80,'Окорок свинной', 4),
-(50,'Сметана 15%', 1),
-(10,'Сметана 20%', 1),
-(19,'product 10', 3),
-(19,'product 12', 4),
-(19,'product 13', 4),
-(19,'product 14', 4),
-(19,'product 15', 4),
-(19,'product 16', 5),
-(19,'product 17', 5),
-(19,'product 18', 5),
-(19,'product 19', 5),
-(19,'product 20', 5),
-(19,'product 21', 6);
-
 CREATE TABLE categories (
     id bigserial primary key,
     create_time timestamp default current_timestamp,
     update_time timestamp default current_timestamp,
     title VARCHAR(255)
 );
-
-INSERT INTO categories (title)
-VALUES
-('Молочные продукты'),
-('Колбасные изделия'),
-('Яйца'),
-('Охлажденное мясо'),
-('Птица'),
-('Рыба'),
-('Хлебобулочные изделия'),
-('Чай');
 
 CREATE TABLE orders (
     id bigserial primary key,
@@ -87,11 +53,6 @@ create table users
     updated_at timestamp default current_timestamp
 );
 
-insert into users (username, password, email, phone, address)
-values ('user', '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i', 'bob_johnson@gmail.com', '222-55-44', 'Moscow, Panfilova 4'),
-       ('admin', '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i', 'john_johnson@gmail.com', '123-34-55', 'Rostov, Lenina 12' ),
-       ('user2', '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i', 'nick_davidson@gmail.com', '324-53-34', 'Voronezh, Lizyukova 8');
-
 create table roles
 (
     id         bigserial primary key,
@@ -100,18 +61,9 @@ create table roles
     updated_at timestamp default current_timestamp
 );
 
-insert into roles (name)
-values ('ROLE_USER'),
-       ('ROLE_ADMIN');
-
 CREATE TABLE users_roles
 (
     user_id bigint not null references users (id),
     role_id bigint not null references roles (id),
     primary key (user_id, role_id)
 );
-
-insert into users_roles (user_id, role_id)
-values (1, 1),
-       (2, 2),
-       (3, 1);

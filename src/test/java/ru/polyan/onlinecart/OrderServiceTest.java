@@ -1,23 +1,24 @@
 package ru.polyan.onlinecart;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
+import ru.polyan.onlinecart.dto.NewOrderDto;
 import ru.polyan.onlinecart.model.*;
+import ru.polyan.onlinecart.services.CartService;
 import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.ProductService;
 import ru.polyan.onlinecart.utils.CartDetail;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.Principal;
 import java.util.Optional;
 
 @SpringBootTest
@@ -27,14 +28,31 @@ public class OrderServiceTest {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
     private CartDetail cartDetail;
 
     @MockBean
     public ProductService productService;
+    @MockBean
+    public CartService cartService;
+
+    class PrincipalImpl implements Principal {
+
+        @Override
+        public String getName() {
+
+            return "user";
+        }
+
+    }
 
     @Test
     public void createAndFind(){
+
+        PrincipalImpl principal = new PrincipalImpl();
+
+        cartDetail = new CartDetail();
+        Mockito.doReturn(cartDetail).when(cartService).getCurrentCart(principal,"test_uid");
+        Mockito.doReturn("test_uid").when(cartService).getCartUuidFromSuffix(principal.getName());
 
         Product p1 = new Product();
         p1.setId(1L);
@@ -60,10 +78,20 @@ public class OrderServiceTest {
         Mockito.doReturn(Optional.of(p1)).when(productService).getProductByID(1L);
         Mockito.doReturn(Optional.of(p2)).when(productService).getProductByID(2L);
 
-        cartDetail.addToCart(1L);
-        cartDetail.addToCart(2L);
+        cartDetail.addToCart(productService, 1L);
+        cartDetail.addToCart(productService, 2L);
 
-        orderService.createOrderForUser(user, "email", "12345");
+        NewOrderDto newOrder = new NewOrderDto();
+        newOrder.setAddressPostcode("123");
+        newOrder.setAddressCountrycode("7");
+        newOrder.setAddressPostcode("123");
+        newOrder.setAddressArea1("123");
+        newOrder.setAddressArea2("123");
+        newOrder.setAddressLine1("123");
+        newOrder.setAddressLine2("123");
+        newOrder.setPhone("123");
+
+        orderService.createOrderForUser(principal, "test_uid", newOrder);
 
         Order order = orderService.findByUserAndId(user, 1L);
 

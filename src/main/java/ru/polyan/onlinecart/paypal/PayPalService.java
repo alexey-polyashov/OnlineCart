@@ -7,15 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 import ru.polyan.onlinecart.model.Product;
 import ru.polyan.onlinecart.model.User;
-import ru.polyan.onlinecart.repositories.ProductRepositoryList;
 import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.ProductService;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

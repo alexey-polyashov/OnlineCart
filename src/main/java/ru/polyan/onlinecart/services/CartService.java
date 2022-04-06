@@ -1,12 +1,12 @@
 package ru.polyan.onlinecart.services;
 
-import jdk.nashorn.internal.runtime.options.Option;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 import ru.polyan.onlinecart.utils.CartDetail;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,11 +14,13 @@ import java.security.Principal;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+
 @Service
 @RequiredArgsConstructor
 public class CartService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+
     @Autowired
     private  ProductService productService;
     @Autowired
@@ -26,6 +28,14 @@ public class CartService {
 
     @Value("${utils.cart.prefix}")
     private String cartPrefix;
+
+    @Autowired
+    JedisConnectionFactory jedisConnectionFactory;
+
+    public void flushAll(){
+        RedisConnection jedisConn = jedisConnectionFactory.getConnection();
+        jedisConn.flushAll();
+    }
 
     public String getCartUuidFromSuffix(String suffix) {
         return cartPrefix + suffix;
@@ -57,7 +67,7 @@ public class CartService {
     }
 
     public void clearCart(String cartKey) {
-        execute(cartKey, c -> c.clear());
+        execute(cartKey, CartDetail::clear);
     }
 
     public void removeItemFromCart(String cartKey, Long productId) {
@@ -90,8 +100,7 @@ public class CartService {
 
 
     public String getCartUuidFromHeader(HttpServletRequest request){
-        String cartUuid = request.getHeader("CartUuid");
-        return cartUuid;
+        return request.getHeader("CartUuid");
     }
 
     public String getCurrentCartUuid(Principal principal, String uuid) {

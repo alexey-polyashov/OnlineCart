@@ -1,10 +1,6 @@
 package ru.polyan.onlinecart.services;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.polyan.onlinecart.dto.NewOrderDto;
 import ru.polyan.onlinecart.dto.OrderItemDto;
@@ -24,7 +20,6 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +29,6 @@ public class OrderService {
     private final OrdersRepository ordersRepository;
     private final ProductService productService;
     private final CartService cartService;
-    private final ModelMapper modelMapper;
     private final UserService userService;
     private final OrderMapper orderMapper;
 
@@ -43,21 +37,16 @@ public class OrderService {
     public boolean saveOrder(List<OrderItemDto> itemsList, BigDecimal totalPrice){
         Order order= new Order();
         order.setTotalPrice(totalPrice);
-        List<OrderItem>  oi = itemsList.stream().map(o->new OrderItem(o)).collect(Collectors.toList());
+        List<OrderItem>  oi = itemsList.stream().map(OrderItem::new).collect(Collectors.toList());
         oi.stream().forEach(o->o.setOrder(order));
         order.setOrderItemList(oi);
-        if(ordersRepository.save(order).getId()!=0){
-            return true;
-        }else{
-            return false;
-        }
+        return ordersRepository.save(order).getId() != 0;
     }
 
     @Transactional
     public void createOrderForUser(Principal principal, String cartUuid, NewOrderDto newOrderDto) {
         User user = userService.findByUsername(principal.getName()).get();
         CartDetail cartDetail = cartService.getCurrentCart(principal, cartUuid);
-        List<String> fields = new ArrayList<>();
         if(cartDetail.getDetails().isEmpty()){
             throw new InvalidInputDataException("В корзине нет товаров!");
         }
@@ -71,7 +60,8 @@ public class OrderService {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setQuantity(o.getQuantity());
-            Product product = productService.getProductByID(o.getProductId()).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+            Product product = productService.getProductByID(o.getProductId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Product not found"));
             orderItem.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(o.getQuantity())));
             orderItem.setPrice(product.getPrice());
             orderItem.setProductId(product.getId());
@@ -91,7 +81,7 @@ public class OrderService {
         return ordersRepository.findByUser(user);
     }
 
-    public Order findByUserAndId(User user, Long Id) {
-        return ordersRepository.findByUserAndId(user, Id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    public Order findByUserAndId(User user, Long id) {
+        return ordersRepository.findByUserAndId(user, id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 }

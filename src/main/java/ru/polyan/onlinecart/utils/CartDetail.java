@@ -2,18 +2,11 @@ package ru.polyan.onlinecart.utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import ru.polyan.onlinecart.dto.OrderItemDto;
 import ru.polyan.onlinecart.dto.ProductDto;
 import ru.polyan.onlinecart.exception.ResourceNotFoundException;
-import ru.polyan.onlinecart.services.OrderService;
 import ru.polyan.onlinecart.services.ProductService;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
