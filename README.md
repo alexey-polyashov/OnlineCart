@@ -1,3 +1,5 @@
+![This is an image](onlinecart.png)
+
 # OnlineCart
 
 Интернет магазин.
