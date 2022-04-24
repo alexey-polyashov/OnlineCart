@@ -1,0 +1,35 @@
+version: '3.8'
+
+volumes:
+  onlinecart:
+
+services:
+
+  postgres:
+    image: postgres:12-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=products
+      - POSTGRES_PASSWORD=pgadmin
+    volumes:
+      - "onlinecart:/var/lib/postgresql/data"
+
+  redis:
+    image: redis:alpine
+
+  application:
+    build: ./
+#    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/products
+      - SPRING_PROFILES_ACTIVE=dev
+      - IMAGES_PATH=/appdata/images
+    image: onlinecart
+    ports:
+      - 8081:8081
+    depends_on:
+      - postgres
+      - redis

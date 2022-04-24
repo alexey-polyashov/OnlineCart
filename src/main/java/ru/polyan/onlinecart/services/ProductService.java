@@ -1,6 +1,7 @@
 package ru.polyan.onlinecart.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductService {
 
     private final CategoryService categoryService;
@@ -79,21 +81,24 @@ public class ProductService {
     public Path getImageFile(Long id, String size) {
 
         long interval = ((id / 500)+1) * 500;
-        String pathString = fileStorage + "/" + interval + "/" + id;
+        log.info("1. fileStorage - {}", fileStorage);
+        Path filePath = Paths.get(fileStorage, String.valueOf(interval), String.valueOf(id));
+        log.info("2. filePath - {}", filePath);
         switch (size){
             case SMALL_IMAGE:
-                pathString = pathString.concat("/small.jpg");
+                filePath = Paths.get(filePath.toString(), "small.jpg");
                 break;
             case BIG_IMAGE:
-                pathString = pathString.concat("/big.jpg");
+                filePath = Paths.get(filePath.toString(), "big.jpg");
                 break;
             default:
-                pathString = fileStorage + "/default/small.jpg";
+                filePath = Paths.get(fileStorage, "default", "small.jpg");
         }
-        Path filePath = Paths.get(pathString);
+        log.info("3. filePath - {}", filePath);
         if (!Files.exists(filePath)) {
-            filePath = Paths.get(fileStorage + "/default/small.jpg");
+            filePath = Paths.get(fileStorage,"default", "small.jpg");
         }
+        log.info("4. filePath - {}", filePath);
 
         return filePath;
 

@@ -1,9 +1,9 @@
-const baseURL_products = 'http://localhost:8189/onlinecart/api/v1/products/product/';
-const baseURL_categories = 'http://localhost:8189/onlinecart/api/v1/products/category/';
-const baseURL_cart  = 'http://localhost:8189/onlinecart/api/v1/cart/';
-const baseURL_auth =    'http://localhost:8189/onlinecart/api/v1/auth/';
-const baseURL_orders = 'http://localhost:8189/onlinecart/api/v1/orders/';
-const baseURL_paypal = 'http://localhost:8189/onlinecart/api/v1/paypal/';
+const baseURL_products = 'http://localhost:8081/onlinecart/api/v1/products/product/';
+const baseURL_categories = 'http://localhost:8081/onlinecart/api/v1/products/category/';
+const baseURL_cart  = 'http://localhost:8081/onlinecart/api/v1/cart/';
+const baseURL_auth =    'http://localhost:8081/onlinecart/api/v1/auth/';
+const baseURL_orders = 'http://localhost:8081/onlinecart/api/v1/orders/';
+const baseURL_paypal = 'http://localhost:8081/onlinecart/api/v1/paypal/';
 
 (function ($localStorage) {
     'use strict';
@@ -51,7 +51,7 @@ const baseURL_paypal = 'http://localhost:8189/onlinecart/api/v1/paypal/';
 
     function run($rootScope, $http, $localStorage) {
 
-        const baseURL_cart  = 'http://localhost:8189/onlinecart/api/v1/cart/';
+        const baseURL_cart  = 'http://localhost:8081/onlinecart/api/v1/cart/';
 
         if ($localStorage.summerUser) {
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.summerUser.token;

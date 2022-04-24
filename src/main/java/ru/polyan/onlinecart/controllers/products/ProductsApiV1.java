@@ -3,7 +3,6 @@ package ru.polyan.onlinecart.controllers.products;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,11 +18,11 @@ import ru.polyan.onlinecart.services.CategoryService;
 import ru.polyan.onlinecart.services.ProductService;
 import ru.polyan.onlinecart.exception.ResourceNotFoundException;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,9 +138,18 @@ public class ProductsApiV1 {
     @ResponseBody
     public ResponseEntity<byte[]> getImageByID(@PathVariable Long id, @PathVariable String size) {
         Path imgPath = productService.getImageFile(id, size);
+        log.info("file exists {}, {}", "resources/application.yml", Files.exists(Paths.get("resources", "application.yml")));
+        log.info("file exists {}, {}", "classes/application.yml", Files.exists(Paths.get("classes", "application.yml")));
+        log.info("file exists {}, {}", "application.yml", Files.exists(Paths.get("application.yml")));
         try {
-            return ResponseEntity.ok().contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE)).body(Files.readAllBytes(imgPath));
+            log.info("read file");
+            byte[] fileData = Files.readAllBytes(imgPath);
+            log.info("set body");
+            return ResponseEntity.ok()
+                    .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
+                    .body(fileData);
         } catch (IOException e) {
+            log.error("Exception: {} \n {}", e.getMessage(), e.getCause());
             e.printStackTrace();
             throw new ResourceNotFoundException("File not found");
         }

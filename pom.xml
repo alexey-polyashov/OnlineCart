@@ -15,6 +15,7 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<maven.test.skip>true</maven.test.skip>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -86,13 +87,6 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-        <dependency>
-            <groupId>ru.polyan</groupId>
-            <artifactId>onlinecart</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-
 
 		<dependency>
 			<groupId>redis.clients</groupId>
@@ -141,10 +135,12 @@
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
@@ -163,7 +159,9 @@
 						<source>${project.basedir}/src/main/resources/xsd/products.xsd</source>
 					</sources>
 				</configuration>
+
 			</plugin>
+
 		</plugins>
 	</build>
 
