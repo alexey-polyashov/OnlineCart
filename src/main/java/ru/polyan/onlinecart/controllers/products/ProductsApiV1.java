@@ -95,7 +95,7 @@ public class ProductsApiV1 {
     public ResponseEntity<?> addProduct(@RequestParam String title, @RequestParam String price, @RequestParam String categoryId){
 
         BigDecimal parsePrice = new BigDecimal(0);
-        Long parseCategoryId = new Long(0);
+        Long parseCategoryId = 0L;
 
         List<String> errors = new ArrayList<>();
 
@@ -138,13 +138,8 @@ public class ProductsApiV1 {
     @ResponseBody
     public ResponseEntity<byte[]> getImageByID(@PathVariable Long id, @PathVariable String size) {
         Path imgPath = productService.getImageFile(id, size);
-        log.info("file exists {}, {}", "resources/application.yml", Files.exists(Paths.get("resources", "application.yml")));
-        log.info("file exists {}, {}", "classes/application.yml", Files.exists(Paths.get("classes", "application.yml")));
-        log.info("file exists {}, {}", "application.yml", Files.exists(Paths.get("application.yml")));
         try {
-            log.info("read file");
             byte[] fileData = Files.readAllBytes(imgPath);
-            log.info("set body");
             return ResponseEntity.ok()
                     .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
                     .body(fileData);

@@ -30,3 +30,8 @@ utils:
   products:
     filestorage: ${IMAGES_PATH:src/main/resources/images}
 
+spring:
+  redis:
+    port: 6379
+    host: localhost
+

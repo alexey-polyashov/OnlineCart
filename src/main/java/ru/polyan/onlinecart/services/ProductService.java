@@ -80,10 +80,10 @@ public class ProductService {
 
     public Path getImageFile(Long id, String size) {
 
+        log.info("getImageFile: id - {}; size - {}", id, size);
+
         long interval = ((id / 500)+1) * 500;
-        log.info("1. fileStorage - {}", fileStorage);
         Path filePath = Paths.get(fileStorage, String.valueOf(interval), String.valueOf(id));
-        log.info("2. filePath - {}", filePath);
         switch (size){
             case SMALL_IMAGE:
                 filePath = Paths.get(filePath.toString(), "small.jpg");
@@ -94,11 +94,10 @@ public class ProductService {
             default:
                 filePath = Paths.get(fileStorage, "default", "small.jpg");
         }
-        log.info("3. filePath - {}", filePath);
         if (!Files.exists(filePath)) {
             filePath = Paths.get(fileStorage,"default", "small.jpg");
         }
-        log.info("4. filePath - {}", filePath);
+        log.info("getImageFile: filePath - {}", filePath);
 
         return filePath;
 
